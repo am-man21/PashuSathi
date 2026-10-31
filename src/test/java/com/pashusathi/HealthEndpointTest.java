@@ -31,4 +31,11 @@ class HealthEndpointTest {
         mockMvc.perform(get("/api/farmers"))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void versionEndpointReturnsCorrectVersion() throws Exception {
+        mockMvc.perform(get("/api/version"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value("0.0.1"));
+    }
 }

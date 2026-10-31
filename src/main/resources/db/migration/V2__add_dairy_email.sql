@@ -1,0 +1,2 @@
+ALTER TABLE dairies
+ADD COLUMN email VARCHAR(120) NULL;

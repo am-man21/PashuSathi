@@ -18,4 +18,9 @@ public class HealthController {
                 "app", "PashuSathi",
                 "time", Instant.now().toString());
     }
+
+    @GetMapping("/version")
+    public Map<String, String> version() {
+        return Map.of("version", "0.0.1");
+    }
 }

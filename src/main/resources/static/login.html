@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | पशुसाथी</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5" style="max-width: 460px;">
+    <h2 class="text-success text-center mb-4">🐄 पशुसाथी / PashuSathi</h2>
+    <div class="card shadow-sm"><div class="card-body p-4">
+        <h5 class="mb-3">लॉगिन / Login</h5>
+        <div id="alert" class="alert alert-danger d-none" role="alert"></div>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label" for="username">उपयोगकर्ता नाम / Username</label>
+                <input class="form-control form-control-lg" id="username" autocomplete="username" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="password">पासवर्ड / Password</label>
+                <input class="form-control form-control-lg" id="password" type="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn btn-success btn-lg w-100" id="btn" type="submit">लॉगिन / Login</button>
+        </form>
+        <p class="mt-3 mb-0 text-center">नई डेयरी? <a href="/register.html">Register your dairy</a></p>
+    </div></div>
+</div>
+<script src="/js/api.js"></script>
+<script>
+    const alertBox = document.getElementById('alert');
+    if (new URLSearchParams(location.search).get('registered')) {
+      alertBox.className = 'alert alert-success';
+      alertBox.textContent = 'Registration successful. Please log in.';
+    }
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn'); btn.disabled = true;
+      try {
+        const body = new URLSearchParams({
+          username: document.getElementById('username').value.trim(),
+          password: document.getElementById('password').value });
+        const user = await Api.post('/api/auth/login', body);
+        await Api.get('/api/auth/me');   // refreshes the CSRF cookie after login
+        location.href = user.role === 'DAIRY' ? '/dairy/dashboard.html' : '/farmer/dashboard.html';
+      } catch (err) {
+        alertBox.className = 'alert alert-danger';
+        alertBox.textContent = err.status === 401 ? 'Username or password is incorrect.' : 'Could not log in: ' + err.message;
+        btn.disabled = false;
+      }
+    });
+</script>
+</body>
+</html>
